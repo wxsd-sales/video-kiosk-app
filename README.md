@@ -1,6 +1,17 @@
-# Kiosk Reception Demo - Vanilla JavaScript Version
+# Video Kiosk App - Vanilla JavaScript Version
 
 A clean, single-page web application for kiosk reception displays. Shows weather information, employee presence cards, and enables calling via Webex.
+This is a proof-of-concept application that is intended to be used as a simple reception desk Kiosk on a Cisco RoomOS device in Kiosk/PWA mode.
+
+<p align="center">
+   <a href="https://app.vidcast.io/share/bb910329-f398-4f04-baec-18ddaf46f493" target="_blank">
+       <img src="https://github.com/wxsd-sales/kiosk-reception-demo/assets/6129517/5e99058f-d4fd-4973-aaae-0d768f10837f" alt="kiosk-reception-demo"/>
+    </a>
+</p>
+
+## Overview
+
+This application allows you to customize the contact cards, brand logo, background, etc. that make up the UI/controls of a RoomOS device in PWA/Kiosk device. You can create multiple URLs and activate them on a compatible device of your choice. Once activated, the application uses [cloud xAPI requests](https://roomos.cisco.com/docs/Introduction.md#the-xapi) with a Webex Bot token to control the device (make calls, etc.).
 
 ## Features
 
@@ -17,41 +28,34 @@ A clean, single-page web application for kiosk reception displays. Shows weather
 - [Material Design Icons](https://materialdesignicons.com/) (via CDN)
 - Client-side only - perfect for GitHub Pages
 
-## Deployment to GitHub Pages
+## Setup
 
-### Option 1: Quick Deploy (Recommended)
+These instructions assume that you have administrator access to an Org's Webex Control Hub and a compatible RoomOS 11 device **in a shared workspace**.
 
-1. **Create a new GitHub repository** under wxsd-sales organization
+1. Create a [Webex Bot Token](https://developer.webex.com/my-apps/new/bot) and [give it full access to your device](https://developer.webex.com/docs/devices#giving-a-bot-or-user-access-to-the-xapi-of-a-device). Note the bot token in a notepad as `WEBEX_TOKEN`.
 
-2. **Upload the files** to your repository:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit"
-   git branch -M main
-   git remote add origin https://github.com/wxsd-sales/YOUR_REPO_NAME.git
-   git push -u origin main
+2. Create a [OWM account](https://home.openweathermap.org/users/sign_up) and get the API token for weather data lookup. You can find the key on your account page under the ["API key"](https://home.openweathermap.org/api_keys) tab. Note the OWM token in a notepad as `OWM_TOKEN`.
+
+3. Note the device identifier by executing the [List Devices API request](https://developer.webex.com/docs/api/v1/devices/list-devices) on the Webex developer portal, it’s the `id` field in the response as `DEVICE_ID`.
+
+4. Create the URL for the reception kiosk by replacing the appropriate values below; you can have as many people as you want. Those are separated by a comma "`,`" and a corresponding Webex Calling extension/number/sip address can be provided by a colon "`:`". For example:
+
+   ```text
+   https://wxsd-sales.github.io/video-kiosk-app?people=john@pubhub-01.wbx.ai:0610,jane@pubhub-01.wbx.ai:1006&background=https://cf-images.us-east-1.prod.boltdns.net/v1/static/1384193102001/46e1a133-643e-435c-b073-8fd26be857e7/757bc84f-02c4-4468-b90b-7f097d265106/1280x720/match/image.jpg&logo=https://www.webexone.com/content/dam/www/us/en/images/webexone/2024/save-the-date/webexone24-logo-white.svg&owmCityId=4164138&owmToken=OWM_TOKEN&webexToken=WEBEX_TOKEN&deviceId=DEVICE_ID
    ```
 
-3. **Enable GitHub Pages**:
-   - Go to your repository on GitHub: `https://github.com/wxsd-sales/YOUR_REPO_NAME`
-   - Click **Settings** → **Pages**
-   - Under "Source", select **main** branch
-   - Select **/ (root)** folder
-   - Click **Save**
+5. Visit the org's [Control Hub device page](https://admin.webex.com/devices), choose your device and make the following changes using the "All configuration" link:
+   - Set the value for `NetworkServices > HTTP > Mode` to `HTTP+HTTPS`
+   - Set the value for `WebEngine > Mode` to `On`
+   
+   Additionally, if running in Kiosk Mode (Desk and Board series devices):
+   - Set the value for `UserInterface > Kiosk > URL` to the URL you created in Step 4 above
+   - Set the value for `UserInterface > Kiosk > Mode` to `On`
 
-4. **Access your site**:
-   - Your site will be available at: `https://wxsd-sales.github.io/YOUR_REPO_NAME/`
-   - Add URL parameters to configure (see below)
+   Additionally, if running in PWA Mode (Room series devices):
+   - Set the value for `WebEngine > Features > Xapi.Peripherals.AllowedHosts.Hosts` to `*`
+   - Set the value for `UserInterface > HomeScreen.Peripherals.WebApp.URL` to the URL you created in Step 4 above
 
-### Option 2: Deploy to GitHub Pages with Custom Domain
-
-Follow Option 1, then:
-
-1. In repository Settings → Pages, add your custom domain
-2. Configure your DNS provider to point to GitHub Pages:
-   - Add a CNAME record pointing to `YOUR_USERNAME.github.io`
-3. Wait for DNS propagation (can take up to 24 hours)
 
 ## URL Parameters
 
@@ -77,7 +81,7 @@ Configure the kiosk by adding URL parameters:
 ### Example URL
 
 ```
-https://wxsd-sales.github.io/YOUR_REPO_NAME/?people=john.doe@company.com:4075579825,jane.smith@company.com:4075579826&background=https://example.com/office.jpg&owmCityId=4366001&owmToken=YOUR_OWM_TOKEN&webexToken=YOUR_WEBEX_TOKEN&deviceId=YOUR_DEVICE_ID&logo=https://example.com/logo.svg
+https://wxsd-sales.github.io/video-kiosk-app/?people=john.doe@company.com:4075579825,jane.smith@company.com:4075579826&background=https://example.com/office.jpg&owmCityId=4366001&owmToken=YOUR_OWM_TOKEN&webexToken=YOUR_WEBEX_TOKEN&deviceId=YOUR_DEVICE_ID&logo=https://example.com/logo.svg
 ```
 
 ## Getting API Tokens
@@ -134,43 +138,6 @@ Add URL parameters for testing:
 http://localhost:8000/?people=test@example.com&owmToken=YOUR_TOKEN&webexToken=YOUR_TOKEN&deviceId=YOUR_DEVICE
 ```
 
-## File Structure
-
-```
-kiosk-reception-demo-vanilla/
-├── index.html          # Main HTML file
-├── styles.css          # Custom CSS styles
-├── app.js             # Application logic
-├── assets/            # Weather icon SVGs
-│   ├── 01d.svg
-│   ├── 01n.svg
-│   ├── 02d.svg
-│   └── ...
-└── README.md          # This file
-```
-
-## Customization
-
-### Change Colors
-
-Edit `styles.css` and modify the CSS variables or Bulma classes.
-
-### Add More Weather Info
-
-Edit `app.js` → `fetchWeather()` function to display additional data from the OpenWeatherMap API response.
-
-### Modify Person Card Layout
-
-Edit `app.js` → `updatePersonCard()` function to change the card HTML structure.
-
-### Update Refresh Intervals
-
-In `app.js`, modify these values:
-```javascript
-setInterval(fetchWeather, 3600000);      // Weather: 1 hour
-setInterval(() => { ... }, 3600000);     // Person data: 1 hour
-```
-
 ## Browser Support
 
 Works in all modern browsers:
@@ -178,16 +145,6 @@ Works in all modern browsers:
 - Firefox 88+
 - Safari 14+
 - Edge 90+
-
-## Security Notes
-
-⚠️ **Important**: Never commit API tokens to your repository!
-
-- Use URL parameters to pass tokens (they won't be in your code)
-- For production, consider:
-  - Using a backend proxy to hide tokens
-  - Implementing proper Webex OAuth flow
-  - Using environment-specific configurations
 
 ## Troubleshooting
 
@@ -215,14 +172,9 @@ Works in all modern browsers:
 
 This is a demo application. Modify and use as needed.
 
-## Credits
+## Support
 
-- Built for WXSD-Sales demos
-- Weather icons from [OpenWeatherMap](https://openweathermap.org/)
-- Icons from [Material Design Icons](https://materialdesignicons.com/)
-- CSS framework: [Bulma](https://bulma.io/)
-
----
+Please reach out to the WXSD team at [wxsd@external.cisco.com](mailto:wxsd@external.cisco.com?subject=Video%20Kiosk%20App)
 
 **Original Svelte version**: This is a rewrite of the original Svelte-based kiosk demo, converted to vanilla JavaScript for easier deployment and maintenance.
 
