@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiosk Reception Demo</title>
+    
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    
+    <!-- Material Design Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <noscript id="javascript-warning" class="hero is-danger is-bold">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">
+                    <span class="icon"><i class="mdi mdi-alert"></i></span>
+                    <span>Javascript is disabled.</span>
+                </h1>
+                <h2 class="subtitle">
+                    This site requires Javascript for its core functionality. Please enable Javascript in browser settings and reload this page.
+                </h2>
+            </div>
+        </div>
+    </noscript>
+
+    <main id="app" class="is-invisible">
+        <!-- Background Image -->
+        <img id="background-image" class="is-brand-background" alt="background" />
+
+        <!-- Main Hero Section -->
+        <section id="hero" class="hero is-fullheight has-text-white is-dark">
+            <!-- Header -->
+            <div class="hero-head">
+                <nav class="navbar is-translucent-black">
+                    <div class="container is-block">
+                        <div class="columns m-0">
+                            <!-- Logo/Brand -->
+                            <div id="brand" class="column is-7 is-flex is-align-self-center">
+                                <img id="logo-image" class="is-brand-logo" alt="Bridge to Possible" />
+                            </div>
+                            
+                            <!-- Weather and Clock -->
+                            <div id="weather" class="column is-5 is-align-self-center">
+                                <section class="weather-container">
+                                    <div id="weather-content">
+                                        <div class="level is-mobile mb-3">
+                                            <p class="level-left is-size-7 has-text-grey-light">Source: OWM</p>
+                                            <p id="weather-place" class="level-right has-text-right has-text-weight-medium is-size-6"></p>
+                                        </div>
+                                        
+                                        <!-- Clock -->
+                                        <div class="level is-mobile mb-0">
+                                            <div class="level-left clock-date" id="clock-date"></div>
+                                            <div class="level-right clock-time" id="clock-time"></div>
+                                        </div>
+                                        
+                                        <!-- Weather Info -->
+                                        <div class="level is-mobile">
+                                            <div class="level-left">
+                                                <p class="level-item" id="weather-temp"></p>
+                                                <p class="level-item is-size-6">
+                                                    <small id="weather-high"></small>
+                                                </p>
+                                                <p class="level-item is-size-6">
+                                                    <small id="weather-low"></small>
+                                                </p>
+                                            </div>
+                                            <div class="level-right has-text-right">
+                                                <div class="level-item is-outer-background-image-container weather-icon-container">
+                                                    <div id="weather-icon" class="is-inner-background-image-container"></div>
+                                                </div>
+                                                <p class="level-item" id="weather-main"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p id="weather-error" class="subtitle has-text-danger is-hidden">Could not get weather data.</p>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+
+            <!-- Body - People Cards -->
+            <div class="hero-body py-2">
+                <div class="container">
+                    <div id="people-cards" class="columns is-multiline is-centered is-vcentered is-flex-grow-1">
+                        <!-- Person cards will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="hero-foot"></div>
+        </section>
+    </main>
+
+    <footer class="footer has-background-grey-lighter">
+        <div class="content has-text-centered">
+            <p>
+                <strong>Kiosk Reception Demo PoC</strong> by WXSD-Sales.<br />
+                &copy; <span id="current-year"></span> Webex by Cisco
+            </p>
+        </div>
+    </footer>
+
+    <!-- Application JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiosk Reception Demo - URL Builder</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <style>
+        body {
+            padding: 2rem 0;
+        }
+        .result-box {
+            word-break: break-all;
+            background: #f5f5f5;
+            padding: 1rem;
+            border-radius: 4px;
+            font-family: monospace;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <section class="section">
+            <h1 class="title">Kiosk Reception Demo - URL Builder</h1>
+            <p class="subtitle">Configure your kiosk parameters and generate a URL</p>
+
+            <div class="box">
+                <h2 class="title is-4">Required Parameters</h2>
+                
+                <div class="field">
+                    <label class="label">Webex Token</label>
+                    <div class="control">
+                        <input class="input" type="text" id="webexToken" placeholder="Your Webex API token">
+                    </div>
+                    <p class="help">Get yours at <a href="https://developer.webex.com/docs/getting-started" target="_blank">developer.webex.com</a></p>
+                </div>
+
+                <div class="field">
+                    <label class="label">Device ID</label>
+                    <div class="control">
+                        <input class="input" type="text" id="deviceId" placeholder="Y2lzY29zcGFyazovL3VzL0RFVklDRS8...">
+                    </div>
+                    <p class="help">Get from Webex API /devices endpoint</p>
+                </div>
+
+                <div class="field">
+                    <label class="label">OpenWeatherMap Token</label>
+                    <div class="control">
+                        <input class="input" type="text" id="owmToken" placeholder="Your OWM API key">
+                    </div>
+                    <p class="help">Sign up at <a href="https://openweathermap.org/api" target="_blank">openweathermap.org</a></p>
+                </div>
+
+                <div class="field">
+                    <label class="label">People (email:dialNumber, comma-separated)</label>
+                    <div class="control">
+                        <textarea class="textarea" id="people" placeholder="john.doe@company.com:4075551234,jane.smith@company.com:4075555678"></textarea>
+                    </div>
+                    <p class="help">Format: email1:number1,email2:number2 (dial number is optional)</p>
+                </div>
+            </div>
+
+            <div class="box">
+                <h2 class="title is-4">Optional Parameters</h2>
+                
+                <div class="field">
+                    <label class="label">Background Image URL</label>
+                    <div class="control">
+                        <input class="input" type="text" id="background" placeholder="https://example.com/background.jpg">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Logo URL</label>
+                    <div class="control">
+                        <input class="input" type="text" id="logo" placeholder="https://example.com/logo.png">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">OpenWeatherMap City ID</label>
+                    <div class="control">
+                        <input class="input" type="text" id="owmCityId" placeholder="5506956" value="5506956">
+                    </div>
+                    <p class="help">Find at <a href="https://openweathermap.org/find" target="_blank">openweathermap.org/find</a> (default: Las Vegas)</p>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <button class="button is-primary is-large" onclick="generateURL()">Generate URL</button>
+                </div>
+            </div>
+
+            <div id="result" style="display: none;">
+                <h2 class="title is-4">Your Kiosk URL</h2>
+                <div class="result-box" id="urlOutput"></div>
+                <div class="field is-grouped" style="margin-top: 1rem;">
+                    <div class="control">
+                        <button class="button is-info" onclick="copyURL()">Copy to Clipboard</button>
+                    </div>
+                    <div class="control">
+                        <button class="button is-success" onclick="openURL()">Open in New Tab</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box" style="margin-top: 2rem;">
+                <h2 class="title is-5">Example URLs</h2>
+                
+                <h3 class="subtitle is-6">Minimal (using defaults):</h3>
+                <div class="result-box">
+                    index.html?people=john@company.com&webexToken=TOKEN&deviceId=DEVICE&owmToken=TOKEN
+                </div>
+
+                <h3 class="subtitle is-6" style="margin-top: 1rem;">Full configuration:</h3>
+                <div class="result-box">
+                    index.html?people=john@company.com:1234,jane@company.com:5678&background=https://example.com/bg.jpg&logo=https://example.com/logo.png&owmCityId=4366001&owmToken=TOKEN&webexToken=TOKEN&deviceId=DEVICE
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        let generatedURL = '';
+
+        function generateURL() {
+            const params = new URLSearchParams();
+            
+            // Required parameters
+            const webexToken = document.getElementById('webexToken').value.trim();
+            const deviceId = document.getElementById('deviceId').value.trim();
+            const owmToken = document.getElementById('owmToken').value.trim();
+            const people = document.getElementById('people').value.trim();
+
+            if (!webexToken || !deviceId || !owmToken || !people) {
+                alert('Please fill in all required parameters');
+                return;
+            }
+
+            params.append('webexToken', webexToken);
+            params.append('deviceId', deviceId);
+            params.append('owmToken', owmToken);
+            params.append('people', people);
+
+            // Optional parameters
+            const background = document.getElementById('background').value.trim();
+            if (background) params.append('background', background);
+
+            const logo = document.getElementById('logo').value.trim();
+            if (logo) params.append('logo', logo);
+
+            const owmCityId = document.getElementById('owmCityId').value.trim();
+            if (owmCityId && owmCityId !== '5506956') params.append('owmCityId', owmCityId);
+
+            // Generate URL
+            const baseURL = window.location.href.replace('EXAMPLE.html', 'index.html');
+            generatedURL = baseURL.split('?')[0] + '?' + params.toString();
+
+            // Display result
+            document.getElementById('urlOutput').textContent = generatedURL;
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function copyURL() {
+            navigator.clipboard.writeText(generatedURL).then(() => {
+                alert('URL copied to clipboard!');
+            }).catch(err => {
+                alert('Failed to copy: ' + err);
+            });
+        }
+
+        function openURL() {
+            window.open(generatedURL, '_blank');
+        }
+    </script>
+</body>
+</html>
+
